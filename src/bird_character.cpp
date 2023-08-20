@@ -7,4 +7,4 @@ const unsigned char bitmap_bird[] PROGMEM = {
 };
 
 Bird::Bird()
-: Character2D((char*)bitmap_bird, 16, 11) {}
+: Character2D((char*)bitmap_bird, BirdSizeX, BirdSizeY) {}
