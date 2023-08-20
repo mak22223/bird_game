@@ -19,6 +19,10 @@ const unsigned char tree_1 [] PROGMEM = {
 	0x02, 0x04, 0x3f, 0x10, 0x08
 };
 
+/* Hardware restrictions */
+#define DISPLAY_HEIGHT 64U
+#define DISPLAY_WIDTH 128U
+
 /* Input button flags */
 #define JUMP_BUTTON_FLAG 0x01
 
@@ -30,10 +34,12 @@ const unsigned char tree_1 [] PROGMEM = {
 /* Game rule constants */
 #define MAX_BIRD_HEIGHT (16U)
 #define MIN_BIRD_HEIGHT (61U)
-#define MAX_OBSTACLE_COUNT (3U)
+#define MAX_OBSTACLE_COUNT (4U)
 #define MAX_OBSTACLE_HEIGHT (20U)
 #define MIN_OBSTACLE_HEIGHT (55U)
+#define OBSTACLE_WIDTH (12U)
 #define OBSTACLE_WINDOWN_HEIGHT (25U)
+#define OBSTACLE_DISTANCE (50L)
 #define JUMP_ACCEL (1U << 8)
 #define GRAVITY_ACCEL (1U << 4)
 
@@ -88,21 +94,21 @@ void processObstacles()
 {
   /* Generating obstacles */
   if (obstacleCount < MAX_OBSTACLE_COUNT) {
-    if (obstacleCount == 0 || (globalPos - obstacles[lastObstacle].x >= (50L << 8))) {
+    if (obstacleCount == 0 || (globalPos - obstacles[lastObstacle].x >= (OBSTACLE_DISTANCE << 8))) {
       uint8_t y = random(MAX_OBSTACLE_HEIGHT, MIN_OBSTACLE_HEIGHT - OBSTACLE_WINDOWN_HEIGHT);
 
       ++obstacleCount;
-      lastObstacle = (lastObstacle == 2) ? 0 : lastObstacle + 1;
+      lastObstacle = (lastObstacle == MAX_OBSTACLE_COUNT - 1) ? 0 : lastObstacle + 1;
       obstacles[lastObstacle].x = globalPos & 0xFFFFFF00;
       obstacles[lastObstacle].y = y;
     }
   }
 
-  /* Moving osbstacles */
+  /* Removing osbstacles */
   for (uint8_t i = 0; i < obstacleCount; ++i) {
     uint8_t index = i > lastObstacle ? MAX_OBSTACLE_COUNT - (i - lastObstacle) : lastObstacle - i;
 
-    if ((globalPos - obstacles[index].x) > (152L << 8)) {
+    if ((globalPos - obstacles[index].x) > ((long)(DISPLAY_WIDTH + OBSTACLE_WIDTH) << 8)) {
       --obstacleCount;
     }
   }
@@ -110,7 +116,7 @@ void processObstacles()
 
 bool checkCollision()
 {
-  
+  return false;
 }
 
 void drawEnvironment()
@@ -161,9 +167,9 @@ void drawObstacles()
   for (uint8_t i = 0; i < obstacleCount; ++i) {
     uint8_t index = i > lastObstacle ? MAX_OBSTACLE_COUNT - (i - lastObstacle) : lastObstacle - i;
 
-    int posX = 140 - (uint8_t)((globalPos - obstacles[index].x) >> 8);
-    oled.rect(posX, obstacles[index].y, posX + 12, MAX_BIRD_HEIGHT, 1);
-    oled.rect(posX, obstacles[index].y + OBSTACLE_WINDOWN_HEIGHT, posX + 12, MIN_BIRD_HEIGHT, 1);
+    int posX = DISPLAY_WIDTH - (uint8_t)((globalPos - obstacles[index].x) >> 8);
+    oled.rect(posX, obstacles[index].y, posX + OBSTACLE_WIDTH, MAX_BIRD_HEIGHT, 1);
+    oled.rect(posX, obstacles[index].y + OBSTACLE_WINDOWN_HEIGHT, posX + OBSTACLE_WIDTH, MIN_BIRD_HEIGHT, 1);
   }
 }
 
