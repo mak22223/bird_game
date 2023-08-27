@@ -257,6 +257,7 @@ void setup() {
 }
 
 void loop() {
+  static Timer gameOverTimer(300);
   if (userInputTimer.check()) {
     static bool lastBtnState = HIGH;
     userInputTimer.reset();
@@ -286,6 +287,7 @@ void loop() {
       processObstacles();
       if (checkCollision()) {
         gameState = GAME_OVER;
+        gameOverTimer.reset();
         if ((gameScore >> 5) > bestScore) {
           bestScore = gameScore >> 5;
           EEPROM.put(BEST_SCORE_ADDRESS, bestScore);
@@ -297,7 +299,7 @@ void loop() {
       break;
 
     case GAME_OVER:
-      if (inputFlags & JUMP_BUTTON_FLAG) {
+      if (gameOverTimer.check() && (inputFlags & JUMP_BUTTON_FLAG)) {
         globalPos = 256;
         gameScore = 0;
         gameSpeed = DEFAULT_GAME_SPEED;
