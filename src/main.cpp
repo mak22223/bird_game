@@ -143,7 +143,7 @@ bool checkCollision()
       int x;
       unsigned int y;
     };
-    
+
     Point2D charPoints[6] = {{ bird.getPosX()                       , ((unsigned)bird.getPosY() >> 8)             },
                              { bird.getPosX()                       , ((unsigned)bird.getPosY() >> 8) + BirdSizeY },
                              { bird.getPosX() + (BirdSizeX << 8)    , ((unsigned)bird.getPosY() >> 8)             },
@@ -304,7 +304,7 @@ void loop() {
         gameScore = 0;
         gameSpeed = DEFAULT_GAME_SPEED;
         obstacleCount = 0;
-        bird.setPosXY(STARTING_POS_X, STARTING_POS_Y);
+        bird.setPosXY(STARTING_POS_X << 8, STARTING_POS_Y << 8);
         bird.setVelXY(0, 0);
         gameState = GAME;
       }
