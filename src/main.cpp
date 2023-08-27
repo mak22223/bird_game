@@ -292,6 +292,7 @@ void loop() {
           bestScore = gameScore >> 5;
           EEPROM.put(BEST_SCORE_ADDRESS, bestScore);
         }
+        break;
       }
 
       gameScore += 1;
