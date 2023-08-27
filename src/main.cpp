@@ -133,7 +133,7 @@ bool checkCollision()
   for (uint8_t i = 0; i < obstacleCount; ++i) {
     uint8_t index = i > lastObstacle ? MAX_OBSTACLE_COUNT - (i - lastObstacle) : lastObstacle - i;
 
-    int obstPosX = ((long)DISPLAY_WIDTH << 8) - (globalPos - obstacles[index].x);
+    unsigned int obstPosX = ((long)DISPLAY_WIDTH << 8) - (globalPos - obstacles[index].x);
     if ((obstPosX > (int)(STARTING_POS_X + BirdSizeX) << 8)) {
       continue;
     }
@@ -144,15 +144,19 @@ bool checkCollision()
       unsigned int y;
     };
     
-    Point2D charPoints[4] = {{ bird.getPosX()                   , ((unsigned)bird.getPosY() >> 8)             },
-                             { bird.getPosX()                   , ((unsigned)bird.getPosY() >> 8) + BirdSizeY },
-                             { bird.getPosX() + (BirdSizeX << 8), ((unsigned)bird.getPosY() >> 8)             },
-                             { bird.getPosX() + (BirdSizeX << 8), ((unsigned)bird.getPosY() >> 8) + BirdSizeY }};
+    Point2D charPoints[6] = {{ bird.getPosX()                       , ((unsigned)bird.getPosY() >> 8)             },
+                             { bird.getPosX()                       , ((unsigned)bird.getPosY() >> 8) + BirdSizeY },
+                             { bird.getPosX() + (BirdSizeX << 8)    , ((unsigned)bird.getPosY() >> 8)             },
+                             { bird.getPosX() + (BirdSizeX << 8)    , ((unsigned)bird.getPosY() >> 8) + BirdSizeY },
+                             { bird.getPosX() + (BirdSizeX / 2 << 8), ((unsigned)bird.getPosY() >> 8)             },
+                             { bird.getPosX() + (BirdSizeX / 2 << 8), ((unsigned)bird.getPosY() >> 8) + BirdSizeY }};
 
-    if ((charPoints[0].x > (int)obstPosX && charPoints[0].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[0].y < obstacles[i].y) ||
-        (charPoints[2].x > (int)obstPosX && charPoints[2].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[2].y < obstacles[i].y) ||
-        (charPoints[1].x > (int)obstPosX && charPoints[1].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[1].y > obstacles[i].y + OBSTACLE_WINDOWN_HEIGHT) ||
-        (charPoints[3].x > (int)obstPosX && charPoints[3].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[3].y > obstacles[i].y + OBSTACLE_WINDOWN_HEIGHT))
+    if ((charPoints[0].x > (int)obstPosX && charPoints[0].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[0].y < obstacles[index].y) ||
+        (charPoints[2].x > (int)obstPosX && charPoints[2].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[2].y < obstacles[index].y) ||
+        (charPoints[4].x > (int)obstPosX && charPoints[4].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[4].y < obstacles[index].y) ||
+        (charPoints[1].x > (int)obstPosX && charPoints[1].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[1].y > obstacles[index].y + OBSTACLE_WINDOWN_HEIGHT) ||
+        (charPoints[3].x > (int)obstPosX && charPoints[3].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[3].y > obstacles[index].y + OBSTACLE_WINDOWN_HEIGHT) ||
+        (charPoints[5].x > (int)obstPosX && charPoints[5].x < (int)(obstPosX + (OBSTACLE_WIDTH << 8)) && charPoints[5].y > obstacles[index].y + OBSTACLE_WINDOWN_HEIGHT))
     {
       collision = true;
       break;
