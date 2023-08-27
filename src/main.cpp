@@ -318,6 +318,12 @@ void loop() {
 
     oled.clear();
 
+    drawScoreboard();
+    drawEnvironment();
+    drawObstacles();
+    oled.fastLineH(MAX_FIELD_HEIGHT, 0, 127);
+    oled.fastLineH(MIN_FIELD_HEIGHT, 0, 127);
+
     switch (gameState)
     {
     case MENU:
@@ -345,18 +351,16 @@ void loop() {
 
     case GAME_OVER:
       oled.drawBitmap(bird.getPosX() >> 8, bird.getPosY() >> 8, (uint8_t *)bird.getBitmap(), bird.getSizeX(), bird.getSizeY(), BITMAP_NORMAL, BUF_ADD);
-      oled.rect(8, 31, 110, 43, 0);
-      oled.setCursorXY(12, 34);
+      oled.rect(20, 26, 110, 54, 0);
+      oled.setCursorXY(25, 30);
       oled.print("Your score: ");
       oled.print(gameScore >> 5);
+      oled.setCursorXY(40, 42);
+      oled.print("Best: ");
+      oled.print(bestScore);
+      oled.rect(21, 27, 109, 53, 2);
       break;
     }
-
-    drawScoreboard();
-    drawEnvironment();
-    drawObstacles();
-    oled.fastLineH(MAX_FIELD_HEIGHT, 0, 127);
-    oled.fastLineH(MIN_FIELD_HEIGHT, 0, 127);
     
     oled.update();
   }
